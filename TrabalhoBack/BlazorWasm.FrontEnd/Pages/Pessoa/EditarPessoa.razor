@@ -1,0 +1,39 @@
+﻿@page "/pessoa/editar/{PessoaId:int}"
+@inject IRepository<Pessoa> repositoryPessoa
+@inject NavigationManager navigationManager
+
+
+<h3>Editar Pessoa</h3>
+@if (pessoa is not null)
+{
+    <FormPessoa Pessoa="pessoa" OnValidSubmit="Edit"/>
+
+    <br />
+    <p>Essa é a rota para editar os dados da pessoa com o Id referente à pessoa selecionada.</p>
+}
+
+
+@code {
+    [Parameter] public int PessoaId { get; set; }
+    private Pessoa pessoa = new Pessoa();
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var resp = await repositoryPessoa.Get(PessoaId);
+            pessoa = resp;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Erro Ao Editar Produto: " + ex.Message);
+
+        }
+    }
+
+    private async Task Edit()
+    {
+        await repositoryPessoa.Update(pessoa);
+        navigationManager.NavigateTo("pessoa");
+    }
+}

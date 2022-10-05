@@ -1,0 +1,65 @@
+﻿@page "/pessoa"
+@inject IRepository<Pessoa> repositoryPessoa
+
+<h3>Index Pessoa</h3>
+
+<div class="form-group">
+    <a class="btn btn-info" href="/pessoa/cadastro">Cadastrar Pessoa</a>
+</div>
+
+@if (pessoas is not null)
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Nome</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in pessoas)
+            {
+                <tr>
+                    <td>
+                        <a class="btn btn-success" href="/pessoa/editar/@item.Id">Editar</a>
+                        <button class="btn btn-danger" @onclick="@(() => DeletarItem(item.Id))">Deletar</button>
+                    </td>
+                    <td>@item.Nome</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <hr/>
+    <p>Está sendo usado uma classe que herda uma interface com algumas Tasks, nas quais manipulam uma lista onde estão sendo armazenadas as Pessoas.</p><br />
+    <p>Nessa página, caso tenha alguma pessoa cadastrada será listada usando um método que retorna todas as pessoas da lista.</p><br />
+    <p>Ao clicar no botão para editar um item, você é redirecionado para uma rota para editar os dados da pessoa com o Id referente à pessoa selecionada.</p><br />
+    <p>Ao clicar no botão para deletar um item, é chamado um método que remove da lista a pessoa com o Id correspondente ao item.</p>
+
+}
+else
+{
+    <h5>Carregando...</h5>
+    <img src="https://media.giphy.com/media/l0He4fJxPCbfqv7Xi/giphy.gif" />
+}
+
+
+
+
+@code {
+
+    List<Pessoa> pessoas = new List<Pessoa>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        pessoas = await repositoryPessoa.Get();
+    }
+
+
+
+    private async Task DeletarItem(int Id)
+    {
+        await repositoryPessoa.Delete(Id);
+        pessoas = await repositoryPessoa.Get();
+    }
+
+}
